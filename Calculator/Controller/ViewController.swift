@@ -10,8 +10,18 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    var isFinishedTypingNumber: Bool = true
-    
+    private var isFinishedTypingNumber: Bool = true
+    private var displayValue: Double {
+        get {
+            guard let number = Double(displayLabel.text!) else {
+                fatalError("Cannot convert display label text to a Double.")
+            }
+            return number
+        }
+        set {
+            displayLabel.text = String(newValue)
+        }
+    }
     @IBOutlet weak var displayLabel: UILabel!
     
     
@@ -19,17 +29,14 @@ class ViewController: UIViewController {
         
         //What should happen when a non-number button is pressed
         isFinishedTypingNumber = true
-        guard let number = Double(displayLabel.text!) else {
-            fatalError("Cannot convert display label text to a Double.")
-        }
+        
         if let calcMethod = sender.currentTitle {
-            if calcMethod == "+/-" {
-                displayLabel.text = String(number * -1)
-            } else if calcMethod == "AC" {
-                displayLabel.text = "0"
-            } else if calcMethod == "%" {
-                displayLabel.text = String(number * 0.01)
+            let calculator = CalculatorLogic(number: displayValue)
+            
+            guard let result = calculator.calculate(symbol: calcMethod) else {
+             fatalError("The Result of Calculation is nil!")
             }
+            displayValue = result
         }
     }
     
@@ -42,6 +49,13 @@ class ViewController: UIViewController {
                 displayLabel.text = numValue
                 isFinishedTypingNumber = false
             } else {
+                if numValue == "." {
+                    
+                    let isInt = floor(displayValue) == displayValue
+                    if !isInt {
+                        return
+                    }
+                }
                 displayLabel.text = displayLabel.text! + numValue
             }
         }
