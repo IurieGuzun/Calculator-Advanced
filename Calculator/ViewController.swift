@@ -18,7 +18,8 @@ class ViewController: UIViewController {
     @IBAction func calcButtonPressed(_ sender: UIButton) {
         
         //What should happen when a non-number button is pressed
-        
+        isFinishedTypingNumber = true
+        let number = Double(displayLabel.text!) ?? 0
     }
     
     
